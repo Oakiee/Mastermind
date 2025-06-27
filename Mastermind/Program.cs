@@ -14,5 +14,7 @@ The hint should be: ++-
 Publish the source code to Github and provide the (public) link for review.
  */
 
-// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+using Mastermind;
+
+var gameHandler = new GameHandler();
+gameHandler.RunGame();
