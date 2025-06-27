@@ -1,4 +1,5 @@
 ﻿using Mastermind.Interfaces;
+using Services;
 
 namespace Mastermind
 {
@@ -7,10 +8,18 @@ namespace Mastermind
     /// </summary>
     public class GameHandler : IGameHandler
     {
+        private readonly GameSessionService gameSessionService;
         private int[]? answer;
         private int guessesMade;
         private bool gameWon;
         private string consoleMargin = "  ";
+        private List<string> previousGuesses;
+
+        public GameHandler()
+        {
+            gameSessionService = new GameSessionService();
+            previousGuesses = new List<string>();
+        }
 
         /// <summary>
         /// Handles the high level execution of the game
@@ -22,7 +31,7 @@ namespace Mastermind
             answer = GenerateSecretAnswer();
 
             //Left commented in here for ease of QA testing
-            //WriteThemeCaution($"Answer: {string.Join("", answer)}");
+            WriteThemeCaution($"Answer: {string.Join("", answer)}");
 
             do
             {
@@ -33,6 +42,9 @@ namespace Mastermind
             {
                 WriteThemeWarning($"\n\nSorry you lost. The Answer is {string.Join("", answer)}");
             }
+
+            AddGameDataToSessionData();
+            DisplayGameSessionStats();
 
             var userNeedsToMakeSelection = true;
 
@@ -47,7 +59,7 @@ namespace Mastermind
                 else if (input?.ToUpperInvariant() == "N")
                 {
                     WriteThemeAttention("Thanks for Playing!");
-                    Thread.Sleep(3000);
+                    Thread.Sleep(2000);
                     Environment.Exit(0);
                 }
                 else
@@ -164,6 +176,8 @@ namespace Mastermind
             var guessesRemaining = 10 - guessesMade;
             var guessIsValid = false;
 
+            Console.WriteLine("\n");
+
             if(guessesRemaining < 4)
             {
                 WriteThemeWarning($"Guesses Remaining: {guessesRemaining}");
@@ -181,17 +195,24 @@ namespace Mastermind
 
                 if (currentGuess != null && InputIsValid(currentGuess))
                 {
-                    guessIsValid = true;
-                    var guessMatchesAnswer = currentGuess == string.Join("", answer);
-                    if (guessMatchesAnswer)
+                    if (!GuessAlreadyMadeInCurrentGame(currentGuess))
                     {
-                        WriteThemeAttention("You Win!!! Congratulations!!");
-                        gameWon = true;
-                    }
-                    else
+                        guessIsValid = true;
+                        previousGuesses.Add(currentGuess);
+                        var guessMatchesAnswer = currentGuess == string.Join("", answer);
+                        if (guessMatchesAnswer)
+                        {
+                            WriteThemeAttention("You Win!!! Congratulations!!");
+                            gameWon = true;
+                        }
+                        else
+                        {
+                            var hint = GenerateHint(answer, currentGuess);
+                            WriteLineWithMargin($"Hint: {hint}");
+                        }
+                    } else
                     {
-                        var hint = GenerateHint(answer, currentGuess);
-                        WriteLineWithMargin($"Hint: {hint}");
+                        WriteThemeWarning("You've already made that guess! Try another.");
                     }
                 }
                 else
@@ -205,12 +226,45 @@ namespace Mastermind
         }
 
         /// <summary>
+        /// Determines if the player has already made this guess in game to ensure they don't accidentally waste a guess
+        /// </summary>
+        /// <param name="currentGuess">the current guess to check against previous guesses</param>
+        /// <returns>true if the player has made the current guess previously this game</returns>
+        private bool GuessAlreadyMadeInCurrentGame(string currentGuess)
+        {
+            return previousGuesses.Contains(currentGuess);
+        }
+
+        /// <summary>
         /// On a replay, set the game data up again
         /// </summary>
         private void ResetGame()
         {
             guessesMade = 0;
             gameWon = false;
+            previousGuesses = new List<string>();
+        }
+
+        /// <summary>
+        /// sends game data to the cache
+        /// </summary>
+        private void AddGameDataToSessionData()
+        {
+            gameSessionService.AddGameDataToSession(gameWon, guessesMade);
+        }
+
+        /// <summary>
+        /// Displays all the game session stats to the console
+        /// </summary>
+        private void DisplayGameSessionStats()
+        {
+            var stats = gameSessionService.GetGameSessionStats();
+            Console.WriteLine("\n");
+            WriteThemeAttentionSecondary($"*******Game Session Stats*******");
+            WriteLineWithMargin($"Games Played: {stats.GamesData.Count}");
+            WriteLineWithMargin($"Games Won: {stats.GamesWon}");
+            WriteLineWithMargin($"Average Guesses Made on Winning Games: {stats.AverageNumberOfGuesses}");
+            WriteThemeAttentionSecondary($"********************************\n\n");
         }
 
         #region ConsoleStyles
@@ -245,6 +299,17 @@ namespace Mastermind
         private void WriteThemeAttention(string text)
         {
             Console.ForegroundColor = ConsoleColor.Green;
+            WriteLineWithMargin($"(*){text}");
+            Console.ResetColor();
+        }
+
+        /// <summary>
+        /// Meant to draw player's attention, generally a positive connotation.
+        /// </summary>
+        /// <param name="text"></param>
+        private void WriteThemeAttentionSecondary(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
             WriteLineWithMargin($"(*){text}");
             Console.ResetColor();
         }
