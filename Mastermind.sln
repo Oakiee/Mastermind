@@ -5,8 +5,6 @@ VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mastermind", "Mastermind\Mastermind.csproj", "{9E32677A-2DFF-46F4-A08C-A3FD145FB10E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Services\Shared.csproj", "{563AD1A9-0421-41EF-ACEB-F626E1DAECC9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{7868C693-0937-49C2-B0B6-F36917087E1A}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{9E32677A-2DFF-46F4-A08C-A3FD145FB10E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E32677A-2DFF-46F4-A08C-A3FD145FB10E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E32677A-2DFF-46F4-A08C-A3FD145FB10E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{563AD1A9-0421-41EF-ACEB-F626E1DAECC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{563AD1A9-0421-41EF-ACEB-F626E1DAECC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{563AD1A9-0421-41EF-ACEB-F626E1DAECC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{563AD1A9-0421-41EF-ACEB-F626E1DAECC9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7868C693-0937-49C2-B0B6-F36917087E1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7868C693-0937-49C2-B0B6-F36917087E1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7868C693-0937-49C2-B0B6-F36917087E1A}.Release|Any CPU.ActiveCfg = Release|Any CPU

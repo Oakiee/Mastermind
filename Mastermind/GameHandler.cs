@@ -22,7 +22,7 @@ namespace Mastermind
             answer = GenerateSecretAnswer();
 
             //Left commented in here for ease of QA testing
-            WriteThemeCaution($"Answer: {string.Join("", answer)}");
+            //WriteThemeCaution($"Answer: {string.Join("", answer)}");
 
             do
             {
