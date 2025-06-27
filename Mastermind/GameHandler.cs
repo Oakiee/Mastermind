@@ -26,13 +26,38 @@ namespace Mastermind
 
             do
             {
-                RunGameRound();
+              RunGameRound();
             } while (!gameWon && guessesMade < 10);
 
             if (!gameWon)
             {
-                WriteThemeWarning($"Sorry you lost. The Answer is {string.Join("", answer)}");
+                WriteThemeWarning($"\n\nSorry you lost. The Answer is {string.Join("", answer)}");
             }
+
+            var userNeedsToMakeSelection = true;
+
+            do
+            {
+                WriteLineWithMargin("Would you Like to Play Again? (Y/N)");
+                var input = Console.ReadLine()?.Trim();
+                if (input?.ToUpperInvariant() == "Y")
+                {
+                    userNeedsToMakeSelection = false;
+                }
+                else if (input?.ToUpperInvariant() == "N")
+                {
+                    WriteThemeAttention("Thanks for Playing!");
+                    Thread.Sleep(3000);
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    WriteThemeWarning("Please enter a valid input (Y/N) i.e. Y by itself.");
+                }
+            } while (userNeedsToMakeSelection);
+
+            ResetGame();
+            RunGame();
         }
 
         /// <summary>
@@ -160,7 +185,7 @@ namespace Mastermind
                     var guessMatchesAnswer = currentGuess == string.Join("", answer);
                     if (guessMatchesAnswer)
                     {
-                        WriteThemeAttention("  You Win!!! Congratulations!!");
+                        WriteThemeAttention("You Win!!! Congratulations!!");
                         gameWon = true;
                     }
                     else
@@ -178,6 +203,17 @@ namespace Mastermind
 
             guessesMade++;
         }
+
+        /// <summary>
+        /// On a replay, set the game data up again
+        /// </summary>
+        private void ResetGame()
+        {
+            guessesMade = 0;
+            gameWon = false;
+        }
+
+        #region ConsoleStyles
 
         /// <summary>
         /// Meant to draw player's attention to a warning
@@ -221,5 +257,7 @@ namespace Mastermind
         {
             Console.WriteLine($"{consoleMargin}{text}");
         }
+
+        #endregion ConsoleStyles
     }
 }
